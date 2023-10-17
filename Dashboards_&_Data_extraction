@@ -1,1 +1,325 @@
+#
 
+-- SELECT COUNT( DISTINCT user_id) FROM nexhera_store.shopping_lists
+-- WHERE domain_id = 2 OR domain_id = 1 AND created_at >= '2023'
+
+
+select COUNT(DISTINCT user_id) from nexhera_store.shopping_lists AS sl
+INNER JOIN nexhera_store.users AS u
+ON u.id = sl.user_id
+where YEAR(sl.created_at) >= 2023
+AND sl.status = 'A'
+AND sl.updated_at >= (CURDATE() - INTERVAL 2 MONTH)
+AND sl.is_deleted = 'false'
+AND sl.domain_id = 2
+AND u.name NOT ILIKE '%test%'
+
+
+--Use interval
+--Use year
+--BETWEEN
+
+
+-- select * from nexhera_store.users
+
+
+-- select * from nexhera_store.shopping_lists
+-- SELECT * FROM nexhera_store.users
+-- WHERE name NOT ILIKE '%test%'
+
+
+SELECT mc.id, mc.name, mc.reg_no, mc.industry_name, mc.product_offer,
+CONCAT(
+ COALESCE(mc.address, ''),
+ ' ',
+ COALESCE(mc.address_2, ''),
+ ' ',
+ COALESCE(mc.city, ''),
+ ' ',
+ COALESCE(mc.state, ''),
+ ' ',
+ COALESCE(mc.zip, ''),
+ ' ',
+ COALESCE(mc.country_name, '')
+) AS Location
+FROM master.companies AS mc
+RIGHT JOIN nexhera_store.domain_memberships AS dm
+ON dm.entity_id = mc.id
+WHERE dm.domain_id = 2 AND dm.domain_entity_type_id = 2 AND mc.source_db = 'nexhera_store'
+AND mc.company_type = 'S'
+AND mc.status = 'P'
+AND mc.contacted = 'N'
+
+
+SELECT name, reg_no, address
+FROM nexhera_store.companies AS c
+INNER JOIN nexhera_store.domain_memberships AS dm
+ON c.id = dm.entity_id
+WHERE dm.domain_entity_type_id = 2 AND dm.domain_id = 2 AND c.company_type = 'S' AND c.industry_id = 10
+
+
+
+#This is a SQL request for Dropee's seasonal website wide sale. After deliberation 
+#with my marketing department, this code was made to filter results of specific companies
+#on this BTB platform.
+
+WITH search AS (
+ SELECT DISTINCT user_id
+ , search_string
+ , 'column1' as category
+
+
+ FROM nexhera_store.search_logs
+
+
+ WHERE user_id IS NOT NULL
+ AND (
+   search_string ilike '%fruit%'
+   OR search_string ilike '%buah%'
+   OR search_string ilike '%apple%'
+   OR search_string ilike '%orange%'
+   OR search_string ilike '%berry%'
+   OR search_string ilike '%pisang%'
+   OR search_string ilike '%banana%'
+   OR search_string ilike '%watermelon%'
+   OR search_string ilike '%tembikai%'
+   OR search_string ilike '%grape%'
+   OR search_string ilike '%epal%'
+   OR search_string ilike '%oren%'
+   OR search_string ilike '%pear%'
+   OR search_string ilike '%mango%'
+   OR search_string ilike '%avocado%'
+   OR search_string ilike '%mangga%'
+   OR search_string ilike '%peach%'
+   OR search_string ilike '%lemon%'
+   OR search_string ilike '%durian%'
+   OR search_string ilike '%nangka%'
+   OR search_string ilike '%papaya%'
+   OR search_string ilike '%betik%'
+ )
+
+
+ UNION
+
+
+ SELECT DISTINCT user_id
+ , search_string
+ , 'column2' as category
+
+
+ FROM nexhera_store.search_logs
+ WHERE user_id IS NOT NULL
+ AND (
+   search_string ilike '%red bull%'
+   OR search_string ilike '%redbull%'
+   OR search_string ilike '%energy%'
+   OR search_string ilike '%energy drink%'
+   OR search_string ilike '%gorilla%'
+   OR search_string ilike '%monster%'
+   OR search_string ilike '%extrajoss%'
+   OR search_string ilike '%carabao%'
+   OR search_string ilike '%ranger%'
+   OR search_string ilike '%gatorade%'
+   OR search_string ilike '%sport drink%'
+   OR search_string ilike '%sting%'
+ )
+ AND search_string NOT ilike '%mamee monster%'
+
+
+ UNION
+
+
+ SELECT user_id
+ , search_string
+ , 'column3' as category
+
+
+ FROM nexhera_store.search_logs
+ WHERE user_id IS NOT NULL
+ AND (
+   search_string ilike '%spritzer%'
+   OR search_string ilike '%spritzer water%'
+   OR search_string ilike '%spritzer dispenser%'
+   OR search_string ilike '%spritzer tinge%'
+   OR search_string ilike '%spritzer mineral water%'
+   OR search_string ilike '%spritzer sparkling%'
+   OR search_string ilike '%spritzer water pump%'
+   OR search_string ilike '%water%'
+   OR search_string ilike '%air mineral%'
+   OR search_string ilike '%air%'
+   OR search_string ilike '%botol air%'
+   OR search_string ilike '%bottled water%'
+   OR search_string ilike '%soda water%'
+   OR search_string ilike '%air soda%'
+ )
+
+
+ UNION
+
+
+ SELECT user_id
+ , search_string
+ , 'column4' as category
+
+
+ FROM nexhera_store.search_logs
+ WHERE user_id IS NOT NULL
+ AND (
+   search_string ilike '%etika%'
+   OR search_string ilike '%etika products%'
+   OR search_string ilike '%pepsi%'
+   OR search_string ilike '%7up%'
+   OR search_string ilike '%sevenup%'
+   OR search_string ilike '%seven up%'
+   OR search_string ilike '%7 up%'
+   OR search_string ilike '%revive%'
+   OR search_string ilike '%revive isotonic%'
+   OR search_string ilike '%isotonic drink%'
+   OR search_string ilike '%minuman isotonic%'
+   OR search_string ilike '%isotonic%'
+   OR search_string ilike '%sport drink%'
+   OR search_string ilike '%energy drink%'
+   OR search_string ilike '%mountain dew%'
+   OR search_string ilike '%kickapoo%'
+   OR search_string ilike '%miranda%'
+   OR search_string ilike '%wonda%'
+   OR search_string ilike '%wonda coffee%'
+   OR search_string ilike '%lipton%'
+   OR search_string ilike '%lipton ice lemon tea%'
+   OR search_string ilike '%goodday%'
+   OR search_string ilike '%good day%'
+   OR search_string ilike '%gatorade%'
+   OR search_string ilike '%sting%'
+   OR search_string ilike '%calpis%'
+   OR search_string ilike '%calpis yogurt drink%'
+   OR search_string ilike '%twister%'
+   OR search_string ilike '%twister juice%'
+   OR search_string ilike '%tropicana twister%'
+   OR search_string ilike '%bleu water%'
+   OR search_string ilike '%dairy champ%'
+ )
+
+
+ UNION
+
+
+ SELECT user_id
+ , search_string
+ , 'column5' as category
+
+
+ FROM nexhera_store.search_logs
+ WHERE user_id IS NOT NULL
+ AND (
+   search_string ilike '%100 plus%'
+   OR search_string ilike '%100plus%'
+   OR search_string ilike '%nescafe%'
+   OR search_string ilike '%coffee%'
+   OR search_string ilike '%kopi%'
+   OR search_string ilike '%tea%'
+   OR search_string ilike '%teh%'
+   OR search_string ilike '%kitkat%'
+   OR search_string ilike '%kit kat%'
+   OR search_string ilike '%kit-kat%'
+   OR search_string ilike '%pringle%'
+   OR search_string ilike '%pringels%'
+   OR search_string ilike '%potato chip%'
+   OR search_string ilike '%potatochip%'
+   OR search_string ilike '%kerepek%'
+   OR search_string ilike '%kerepek kentang%'
+   OR search_string ilike '%tong garden%'
+   OR search_string ilike '%tonggarden%'
+   OR search_string ilike '%nuts%'
+   OR search_string ilike '%salted nuts%'
+   OR search_string ilike '%kacang%'
+   OR search_string ilike '%julie%'
+   OR search_string ilike '%julies%'
+   OR search_string ilike '%biscuit%'
+   OR search_string ilike '%biskut%'
+   OR search_string ilike '%crackers%'
+   OR search_string ilike '%kewpie%'
+   OR search_string ilike '%mayo%'
+   OR search_string ilike '%mayonaise%'
+   OR search_string ilike '%japanese mayo%'
+   OR search_string ilike '%kimball%'
+   OR search_string ilike '%sauce%'
+   OR search_string ilike '%sos%'
+   OR search_string ilike '%ketchup%'
+   OR search_string ilike '%life%'
+   OR search_string ilike '%chili%'
+   OR search_string ilike '%cili%'
+   OR search_string ilike '%campbell%'
+   OR search_string ilike '%soup%'
+   OR search_string ilike '%mushroom%'
+   OR search_string ilike '%cendawan%'
+   OR search_string ilike '%honey b%'
+   OR search_string ilike '%madu%'
+   OR search_string ilike '%coca-cola%'
+   OR search_string ilike '%cocacola%'
+   OR search_string ilike '%coca cola%'
+   OR search_string ilike '%cola%'
+   OR search_string ilike '%kola%'
+   OR search_string ilike '%coke%'
+   OR search_string ilike '%air coke%'
+   OR search_string ilike '%isotonic%'
+   OR search_string ilike '%carbonated%'
+   OR search_string ilike '%soft drinks%'
+   OR search_string ilike '%drinks%'
+   OR search_string ilike '%sprite%'
+   OR search_string ilike '%schweppes%'
+   OR search_string ilike '%air tonik%'
+   OR search_string ilike '%tonic%'
+   OR search_string ilike '%fanta%'
+   OR search_string ilike '%heaven and earth%'
+   OR search_string ilike '%iced lemon tea%'
+   OR search_string ilike '%heaven & earth%'
+   OR search_string ilike '%a&w%'
+   OR search_string ilike '%root beer%'
+   OR search_string ilike '%monster%'
+   OR search_string ilike '%monster energy drink%'
+   OR search_string ilike '%yeos%'
+   OR search_string ilike '%chrysanthemum%'
+   OR search_string ilike '%chrysanthimum%'
+ )
+)
+, sg AS (
+ SELECT user_id, category, count(*) as count_by_column
+  FROM search
+ GROUP BY 1, 2
+)
+, segment AS (
+ WITH CTE_dateset as (
+   SELECT u.id as user_id,
+   DATE(MAX(o.created_at_myt)) AS date_user_last_purchase,
+   u.last_login_myt as date_user_last_login
+  
+   FROM nexhera_store.users u
+   LEFT JOIN nexhera_store.orders o ON u.id = o.user_id
+  
+   GROUP BY 1,3
+ )
+ SELECT *,
+ CASE WHEN date_diff(current_date(), DATE(date_user_last_purchase)) <= 30 THEN 'MTU within 30 days'
+     WHEN date_diff(current_date(), date_user_last_login) <= 30 THEN 'MAU within 30 days'
+     WHEN date_diff(current_date(), date_user_last_login) BETWEEN 31 AND 60 THEN 'Non MAU 31 - 60 days'
+     WHEN date_diff(current_date(), date_user_last_login) > 60 THEN 'Non MAU >60 days'
+     END AS Segment
+ FROM CTE_dateset
+)
+SELECT sg.*
+-- , REGEXP_REPLACE(u.mobile_no, '[^0-9]*', '') AS check_number
+, CASE WHEN substring(REGEXP_REPLACE(u.mobile_no, '[^0-9]*', ''), 1, 1) = 0 THEN concat(6,REGEXP_REPLACE(u.mobile_no, '[^0-9]*', ''))
+ WHEN substring(REGEXP_REPLACE(u.mobile_no, '[^0-9]*', ''),1,1) = 1 THEN concat(60,REGEXP_REPLACE(u.mobile_no, '[^0-9]*', ''))
+ ELSE REGEXP_REPLACE(u.mobile_no, '[^0-9]*', '') END AS clean_number
+, u.email
+, segment.Segment
+
+
+FROM sg
+LEFT JOIN segment ON sg.user_id = segment.user_id
+LEFT JOIN nexhera_store.users u ON sg.user_id = u.id
+
+
+ORDER BY 1 DESC, 3 DESC
+
+#
